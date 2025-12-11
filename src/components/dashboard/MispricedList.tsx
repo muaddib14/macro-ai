@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { LoadingSpinner } from '@/components/ui/Loading';
-import { Modal, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/Modal';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/Modal';
 import { cn, formatPercentage, getConfidenceColor } from '@/utils';
 import { MispricedMarket } from '@/types';
 
@@ -136,9 +136,9 @@ const MispricedList: React.FC<MispricedListProps> = ({ data, isLoading, error })
       </Card>
 
       {/* Market Detail Modal */}
-      <Modal 
-        isOpen={!!selectedMarket} 
-        onClose={() => setSelectedMarket(null)}
+      <Dialog 
+        open={!!selectedMarket} 
+        onOpenChange={(open) => !open && setSelectedMarket(null)}
       >
         <DialogContent className="max-w-2xl">
           <DialogHeader>
@@ -237,7 +237,7 @@ const MispricedList: React.FC<MispricedListProps> = ({ data, isLoading, error })
             </div>
           )}
         </DialogContent>
-      </Modal>
+      </Dialog>
     </>
   );
 };

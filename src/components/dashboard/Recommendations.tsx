@@ -147,8 +147,8 @@ const Recommendations: React.FC<RecommendationsProps> = ({ data, isLoading, erro
                   </div>
                   <div className="flex items-center space-x-1">
                     <span className="text-[#A1A1AA]">Confidence:</span>
-                    <span className={cn('font-medium uppercase', getConfidenceColor(trade.confidence))}>
-                      {trade.confidence}
+                    <span className={cn('font-medium uppercase', getConfidenceColor(trade.confidence_band))}>
+                      {trade.confidence_band}
                     </span>
                   </div>
                 </div>

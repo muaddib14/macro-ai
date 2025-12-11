@@ -6,7 +6,7 @@ import { cn } from '@/utils';
 import { RealMarketData, getMarketSentiment, getMacroRegime } from '@/data/realMarketData';
 
 interface MarketInsightsProps {
-  data: RealMarketData;
+  data: RealMarketData | null;
   isLoading: boolean;
   error?: string | null;
 }

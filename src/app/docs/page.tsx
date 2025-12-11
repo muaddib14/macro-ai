@@ -29,7 +29,7 @@ export default function DocsPage() {
           probability: 74,
           horizon: '90d'
         },
-        timeseries: [...]
+        timeseries: []
       }
     },
     {
@@ -41,7 +41,7 @@ export default function DocsPage() {
           domain: 'Fed',
           score: 23,
           intensity: 'low',
-          top_headlines: [...]
+          top_headlines: []
         }
       ]
     },

@@ -122,31 +122,31 @@ export default function HomePage() {
           <DashboardGrid
             regimeData={dashboardData.regime}
             regimeLoading={dashboardData.isLoading}
-            regimeError={dashboardData.error}
+            regimeError={dashboardData.error || null}
             
             shockData={dashboardData.shock}
             shockLoading={dashboardData.isLoading}
-            shockError={dashboardData.error}
+            shockError={dashboardData.error || null}
             
             marketData={dashboardData.markets}
             marketLoading={dashboardData.isLoading}
-            marketError={dashboardData.error}
+            marketError={dashboardData.error || null}
             
             recommendationData={dashboardData.recommendations}
             recommendationLoading={dashboardData.isLoading}
-            recommendationError={dashboardData.error}
+            recommendationError={dashboardData.error || null}
             
             liquidityData={dashboardData.liquidity}
             liquidityLoading={dashboardData.isLoading}
-            liquidityError={dashboardData.error}
+            liquidityError={dashboardData.error || null}
             
             volatilityData={dashboardData.volatility}
             volatilityLoading={dashboardData.isLoading}
-            volatilityError={dashboardData.error}
+            volatilityError={dashboardData.error || null}
             
             newsData={dashboardData.news}
             newsLoading={dashboardData.isLoading}
-            newsError={dashboardData.error}
+            newsError={dashboardData.error || null}
           />
         </motion.div>
 

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { LoadingSpinner } from '@/components/ui/Loading';
-import { Modal, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/Modal';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/Modal';
 import { cn, getIntensityStyles } from '@/utils';
 import { ShockDomain } from '@/types';
 
@@ -104,9 +104,9 @@ const ShockHeatmap: React.FC<ShockHeatmapProps> = ({ data, isLoading, error }) =
       </Card>
 
       {/* Modal for domain details */}
-      <Modal 
-        isOpen={!!selectedDomain} 
-        onClose={() => setSelectedDomain(null)}
+      <Dialog 
+        open={!!selectedDomain} 
+        onOpenChange={(open) => !open && setSelectedDomain(null)}
       >
         <DialogContent className="max-w-md">
           <DialogHeader>
@@ -161,7 +161,7 @@ const ShockHeatmap: React.FC<ShockHeatmapProps> = ({ data, isLoading, error }) =
             </div>
           )}
         </DialogContent>
-      </Modal>
+      </Dialog>
     </>
   );
 };

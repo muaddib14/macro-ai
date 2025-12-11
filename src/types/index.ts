@@ -150,3 +150,6 @@ export interface NavigationItem {
   icon?: React.ComponentType;
   active?: boolean;
 }
+
+// Re-export RealMarketData from data module
+export type { RealMarketData } from '@/data/realMarketData';

@@ -1,0 +1,21 @@
+import React from 'react';
+import { cn } from '@/utils';
+import Header from './Header';
+
+interface LayoutProps {
+  children: React.ReactNode;
+  className?: string;
+}
+
+const Layout: React.FC<LayoutProps> = ({ children, className }) => {
+  return (
+    <div className="min-h-screen bg-[#000000] text-[#FFFFFF]">
+      <Header />
+      <main className={cn('container mx-auto px-4 py-6', className)}>
+        {children}
+      </main>
+    </div>
+  );
+};
+
+export default Layout;

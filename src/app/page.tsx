@@ -4,10 +4,12 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import Layout from '@/components/layout/Layout';
 import DashboardGrid from '@/components/dashboard/DashboardGrid';
-import { useDashboardData } from '@/hooks';
+import RealMarketTracker from '@/components/dashboard/RealMarketTracker';
+import MarketInsights from '@/components/dashboard/MarketInsights';
+import { useEnhancedDashboardData } from '@/hooks/useRealMarketData';
 
 export default function HomePage() {
-  const dashboardData = useDashboardData();
+  const dashboardData = useEnhancedDashboardData();
 
   return (
     <Layout>
@@ -34,7 +36,7 @@ export default function HomePage() {
           </div>
         </motion.div>
 
-        {/* Live Dashboard */}
+        {/* Real Market Data */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -44,15 +46,75 @@ export default function HomePage() {
             <div className="flex items-center justify-between">
               <div>
                 <h2 className="text-2xl font-orbitron font-bold text-[#FFFFFF] mb-2">
-                  Live Dashboard
+                  Real Market Data
                 </h2>
                 <p className="text-[#A1A1AA]">
-                  Real-time macro analysis and prediction market opportunities
+                  Live market data from Yahoo Finance, commodities, and financial news
                 </p>
               </div>
               <div className="flex items-center space-x-2">
                 <div className="w-2 h-2 bg-[#10B981] rounded-full animate-pulse"></div>
                 <span className="text-xs text-[#A1A1AA]">Live Data</span>
+              </div>
+            </div>
+          </div>
+          
+          <RealMarketTracker
+            data={dashboardData.realMarket}
+            isLoading={dashboardData.isLoading}
+            error={dashboardData.error}
+          />
+        </motion.div>
+
+        {/* AI Market Insights */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3 }}
+        >
+          <div className="mb-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <h2 className="text-2xl font-orbitron font-bold text-[#FFFFFF] mb-2">
+                  AI Market Insights
+                </h2>
+                <p className="text-[#A1A1AA]">
+                  Machine learning analysis of market conditions and regime detection
+                </p>
+              </div>
+              <div className="flex items-center space-x-2">
+                <div className="w-2 h-2 bg-[#FFA500] rounded-full animate-pulse"></div>
+                <span className="text-xs text-[#A1A1AA]">AI Analysis</span>
+              </div>
+            </div>
+          </div>
+          
+          <MarketInsights
+            data={dashboardData.realMarket}
+            isLoading={dashboardData.isLoading}
+            error={dashboardData.error}
+          />
+        </motion.div>
+
+        {/* AI Analysis Dashboard */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.4 }}
+        >
+          <div className="mb-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <h2 className="text-2xl font-orbitron font-bold text-[#FFFFFF] mb-2">
+                  AI Macro Analysis
+                </h2>
+                <p className="text-[#A1A1AA]">
+                  AI-powered regime detection, narrative analysis, and prediction market insights
+                </p>
+              </div>
+              <div className="flex items-center space-x-2">
+                <div className="w-2 h-2 bg-[#FFA500] rounded-full animate-pulse"></div>
+                <span className="text-xs text-[#A1A1AA]">AI Models</span>
               </div>
             </div>
           </div>

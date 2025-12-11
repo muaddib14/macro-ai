@@ -10,6 +10,9 @@ import {
   ApiResponse
 } from '@/types';
 
+// Supabase Configuration
+const SUPABASE_URL = 'https://jegrpysiqarjhdeszhdc.supabase.co';
+
 // Base API Service following SOLID principles
 abstract class BaseApiService {
   protected async fetchWithErrorHandling<T>(url: string): Promise<T> {
@@ -39,8 +42,8 @@ abstract class BaseApiService {
 export class RegimeService extends BaseApiService {
   async getRegimeData(): Promise<ApiResponse<RegimeData>> {
     try {
-      const data = await this.fetchWithErrorHandling<RegimeData>('/api/regime');
-      return this.createApiResponse(data);
+      const response = await this.fetchWithErrorHandling<{ data: RegimeData }>(`${SUPABASE_URL}/functions/v1/regime-analysis`);
+      return this.createApiResponse(response.data);
     } catch (error) {
       throw new Error(`Failed to fetch regime data: ${error}`);
     }
@@ -48,8 +51,8 @@ export class RegimeService extends BaseApiService {
 
   async getRegimeTimeseries(horizon: string = '90d'): Promise<ApiResponse<RegimeData['timeseries']>> {
     try {
-      const data = await this.fetchWithErrorHandling<RegimeData['timeseries']>(`/api/regime/timeseries?horizon=${horizon}`);
-      return this.createApiResponse(data);
+      const response = await this.fetchWithErrorHandling<{ data: RegimeData }>(`${SUPABASE_URL}/functions/v1/regime-analysis`);
+      return this.createApiResponse(response.data.timeseries);
     } catch (error) {
       throw new Error(`Failed to fetch regime timeseries: ${error}`);
     }
@@ -149,11 +152,32 @@ export class WidgetService extends BaseApiService {
   }
 }
 
+// Real Market Service - Single Responsibility: Handle real market data
+export class RealMarketService extends BaseApiService {
+  async getRealMarketData(): Promise<ApiResponse<any>> {
+    try {
+      const response = await this.fetchWithErrorHandling<{ data: any }>(`${SUPABASE_URL}/functions/v1/real-market-data`);
+      return this.createApiResponse(response.data);
+    } catch (error) {
+      throw new Error(`Failed to fetch real market data: ${error}`);
+    }
+  }
+
+  async getAIInsights(): Promise<ApiResponse<any>> {
+    try {
+      const response = await this.fetchWithErrorHandling<{ data: any }>(`${SUPABASE_URL}/functions/v1/ai-insights`);
+      return this.createApiResponse(response.data);
+    } catch (error) {
+      throw new Error(`Failed to fetch AI insights: ${error}`);
+    }
+  }
+}
+
 // Chat Service - Single Responsibility: Handle AI chat functionality
 export class ChatService extends BaseApiService {
   async sendMessage(message: string): Promise<ApiResponse<ChatResponse>> {
     try {
-      const response = await fetch('/api/chat', {
+      const response = await fetch(`${SUPABASE_URL}/functions/v1/ai-chat`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -166,7 +190,7 @@ export class ChatService extends BaseApiService {
       }
 
       const data = await response.json();
-      return this.createApiResponse(data);
+      return this.createApiResponse(data.data);
     } catch (error) {
       throw new Error(`Failed to send chat message: ${error}`);
     }
@@ -195,6 +219,7 @@ export class ServiceContainer {
   public readonly widget: WidgetService;
   public readonly chat: ChatService;
   public readonly status: StatusService;
+  public readonly realMarket: RealMarketService;
 
   private constructor() {
     this.regime = new RegimeService();
@@ -204,6 +229,7 @@ export class ServiceContainer {
     this.widget = new WidgetService();
     this.chat = new ChatService();
     this.status = new StatusService();
+    this.realMarket = new RealMarketService();
   }
 
   public static getInstance(): ServiceContainer {

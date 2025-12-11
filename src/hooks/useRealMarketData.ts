@@ -1,9 +1,8 @@
 import { useState, useEffect, useCallback } from 'react';
 import { api } from '@/services/api';
 import { ApiResponse, LoadingState, RealMarketData } from '@/types';
-import { createRealMarketData } from '@/data/realMarketData';
 
-// Hook for real market data
+// Hook for real market data from Supabase
 export const useRealMarketData = (refreshInterval: number = 30000) => {
   const [data, setData] = useState<RealMarketData | null>(null);
   const [loadingState, setLoadingState] = useState<LoadingState>({
@@ -12,11 +11,9 @@ export const useRealMarketData = (refreshInterval: number = 30000) => {
 
   const fetchData = useCallback(async () => {
     try {
-      // In a real implementation, this would fetch from actual APIs
-      // For now, we'll use our enhanced mock data with real market structure
-      const marketData = createRealMarketData();
-      
-      setData(marketData);
+      // Fetch from Supabase Edge Function
+      const response = await api.realMarket.getRealMarketData();
+      setData(response.data);
       setLoadingState({ isLoading: false });
     } catch (error) {
       setLoadingState({

@@ -5,23 +5,23 @@
 
 @layer base {
   :root {
-    --background: 0 0% 0%;
-    --foreground: 0 0% 100%;
+    --background: 0 0% 2%; /* #050505 */
+    --foreground: 39 100% 70%; /* #FFC850 */
     --card: 0 0% 4%;
-    --card-foreground: 0 0% 100%;
+    --card-foreground: 39 100% 70%;
     --popover: 0 0% 4%;
-    --popover-foreground: 0 0% 100%;
-    --primary: 39 100% 50%;
-    --primary-foreground: 0 0% 0%;
-    --secondary: 0 0% 15%;
-    --secondary-foreground: 0 0% 100%;
-    --muted: 0 0% 20%;
-    --muted-foreground: 0 0% 63%;
-    --accent: 0 0% 15%;
-    --accent-foreground: 0 0% 100%;
+    --popover-foreground: 39 100% 70%;
+    --primary: 39 100% 50%; /* #FF9500 */
+    --primary-foreground: 0 0% 2%;
+    --secondary: 0 0% 8%;
+    --secondary-foreground: 39 100% 70%;
+    --muted: 0 0% 15%;
+    --muted-foreground: 39 60% 50%; /* #FF9500 */
+    --accent: 20 100% 50%; /* #FF5500 */
+    --accent-foreground: 39 100% 70%;
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
-    --border: 0 0% 15%;
+    --border: 20 100% 30%; /* #CC4400 */
     --input: 0 0% 15%;
     --ring: 39 100% 50%;
     --radius: 0.75rem;
@@ -36,6 +36,8 @@
   body {
     @apply bg-background text-foreground font-inter;
     font-feature-settings: "rlig" 1, "calt" 1;
+    background: #050505;
+    color: #FFC850;
   }
   
   /* Custom scrollbar */
@@ -44,36 +46,74 @@
   }
   
   ::-webkit-scrollbar-track {
-    @apply bg-[#18181B];
+    @apply bg-[#080400];
   }
   
   ::-webkit-scrollbar-thumb {
-    @apply bg-[#27272A] rounded-full;
+    @apply bg-[#FF5500] rounded-full;
   }
   
   ::-webkit-scrollbar-thumb:hover {
-    @apply bg-[#3F3F46];
+    @apply bg-[#FFC850];
   }
   
   /* Custom selection */
   ::selection {
-    @apply bg-[#FFA500] text-[#000000];
+    @apply bg-[#FFC850] text-[#050505];
   }
   
   /* Focus styles */
   .focus-visible {
-    @apply outline-none ring-2 ring-[#FFA500] ring-offset-2 ring-offset-[#000000];
+    @apply outline-none ring-2 ring-[#FFC850] ring-offset-2 ring-offset-[#050505];
   }
 }
 
 @layer components {
-  /* Glow effect utilities */
-  .glow-orange {
-    box-shadow: 0 0 20px rgba(255, 165, 0, 0.3);
+  /* Neon Text Glow Effects */
+  .neon-text-glow {
+    color: #FFC850;
+    text-shadow: 
+      0 0 5px #FF9500,
+      0 0 10px #FF9500,
+      0 0 20px #FF5500,
+      0 0 40px #CC4400;
   }
   
-  .glow-orange-sm {
-    box-shadow: 0 0 15px rgba(255, 165, 0, 0.15);
+  .neon-text-glow-sm {
+    color: #FFC850;
+    text-shadow: 
+      0 0 3px #FF9500,
+      0 0 8px #FF9500;
+  }
+  
+  .neon-text-glow-lg {
+    color: #FFC850;
+    text-shadow: 
+      0 0 5px #FF9500,
+      0 0 15px #FF9500,
+      0 0 30px #FF5500,
+      0 0 60px #CC4400,
+      0 0 80px #CC4400;
+  }
+  
+  /* Glow effect utilities */
+  .glow-amber {
+    box-shadow: 
+      0 0 20px rgba(255, 165, 0, 0.4),
+      0 0 40px rgba(255, 85, 0, 0.2);
+  }
+  
+  .glow-amber-sm {
+    box-shadow: 
+      0 0 10px rgba(255, 165, 0, 0.3),
+      0 0 20px rgba(255, 85, 0, 0.15);
+  }
+  
+  .glow-amber-lg {
+    box-shadow: 
+      0 0 30px rgba(255, 165, 0, 0.5),
+      0 0 60px rgba(255, 85, 0, 0.3),
+      0 0 90px rgba(204, 68, 0, 0.2);
   }
   
   /* Animation utilities */
@@ -86,13 +126,32 @@
   }
   
   /* Text gradient */
-  .text-gradient {
-    @apply bg-gradient-to-r from-[#FFA500] to-[#FF7A1A] bg-clip-text text-transparent;
+  .text-gradient-amber {
+    @apply bg-gradient-to-r from-[#FFC850] to-[#FF5500] bg-clip-text text-transparent;
   }
   
   /* Border gradient */
-  .border-gradient {
-    border-image: linear-gradient(135deg, #FFA500 0%, #FF7A1A 100%) 1;
+  .border-gradient-amber {
+    border-image: linear-gradient(135deg, #FFC850 0%, #FF5500 100%) 1;
+  }
+  
+  /* Hot Glow Button */
+  .hot-glow-button {
+    background: linear-gradient(135deg, #FFC850, #FF5500);
+    color: #050505;
+    box-shadow: 
+      0 0 20px rgba(255, 165, 0, 0.4),
+      0 4px 15px rgba(255, 85, 0, 0.3),
+      inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    transition: all 0.3s ease;
+  }
+  
+  .hot-glow-button:hover {
+    box-shadow: 
+      0 0 30px rgba(255, 165, 0, 0.6),
+      0 6px 20px rgba(255, 85, 0, 0.4),
+      inset 0 1px 0 rgba(255, 255, 255, 0.3);
+    transform: translateY(-2px);
   }
 }
 
@@ -108,19 +167,41 @@
   }
   
   /* Glass morphism effect */
-  .glass {
-    background: rgba(9, 9, 11, 0.8);
+  .glass-amber {
+    background: rgba(5, 5, 5, 0.8);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(39, 39, 42, 0.5);
+    border: 1px solid rgba(255, 85, 0, 0.2);
   }
   
   /* Neon border effect */
-  .neon-border {
+  .neon-border-amber {
     box-shadow: 
-      0 0 5px rgba(255, 165, 0, 0.5),
+      0 0 5px rgba(255, 165, 0, 0.6),
+      0 0 10px rgba(255, 85, 0, 0.4),
       inset 0 0 5px rgba(255, 165, 0, 0.1);
-    border: 1px solid rgba(255, 165, 0, 0.3);
+    border: 1px solid rgba(255, 165, 0, 0.4);
+  }
+  
+  /* Cinematic grain effect */
+  .cinematic-grain {
+    position: relative;
+  }
+  
+  .cinematic-grain::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0.03;
+    pointer-events: none;
+    background-image: 
+      radial-gradient(circle at 25% 25%, #FFC850 1px, transparent 1px),
+      radial-gradient(circle at 75% 75%, #FF5500 1px, transparent 1px);
+    background-size: 3px 3px, 2px 2px;
+    animation: grain 8s infinite;
   }
 }
 
@@ -144,14 +225,42 @@
   }
 }
 
-@keyframes pulse-glow {
+@keyframes pulse-glow-amber {
   0%, 100% {
     opacity: 1;
-    box-shadow: 0 0 15px rgba(255, 165, 0, 0.15);
+    box-shadow: 
+      0 0 20px rgba(255, 165, 0, 0.3),
+      0 0 40px rgba(255, 85, 0, 0.15);
   }
   50% {
     opacity: 0.8;
-    box-shadow: 0 0 25px rgba(255, 165, 0, 0.25);
+    box-shadow: 
+      0 0 30px rgba(255, 165, 0, 0.5),
+      0 0 60px rgba(255, 85, 0, 0.25);
+  }
+}
+
+@keyframes grain {
+  0%, 100% { transform: translate(0, 0) }
+  10% { transform: translate(-5%, -10%) }
+  20% { transform: translate(-15%, 5%) }
+  30% { transform: translate(7%, -25%) }
+  40% { transform: translate(-5%, 25%) }
+  50% { transform: translate(-15%, 10%) }
+  60% { transform: translate(15%, 0%) }
+  70% { transform: translate(0%, 15%) }
+  80% { transform: translate(3%, 35%) }
+  90% { transform: translate(-10%, 10%) }
+}
+
+@keyframes ambient-pulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.1;
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 0.2;
   }
 }
 

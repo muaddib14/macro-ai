@@ -96,8 +96,8 @@ export class RegimeService extends BaseApiService {
 export class ShockService extends BaseApiService {
   async getShockData(): Promise<ApiResponse<ShockDomain[]>> {
     try {
-      const data = await this.fetchWithErrorHandling<ShockDomain[]>('/api/shock');
-      return this.createApiResponse(data);
+      const response = await this.fetchSupabaseFunction<{ data: ShockDomain[][] }>(`${SUPABASE_URL}/functions/v1/shock-analysis`);
+      return this.createApiResponse(response.data.flat());
     } catch (error) {
       throw new Error(`Failed to fetch shock data: ${error}`);
     }
@@ -105,8 +105,8 @@ export class ShockService extends BaseApiService {
 
   async getShockHeatmap(): Promise<ApiResponse<ShockDomain[][]>> {
     try {
-      const data = await this.fetchWithErrorHandling<ShockDomain[][]>('/api/shock/heatmap');
-      return this.createApiResponse(data);
+      const response = await this.fetchSupabaseFunction<{ data: ShockDomain[][] }>(`${SUPABASE_URL}/functions/v1/shock-analysis`);
+      return this.createApiResponse(response.data);
     } catch (error) {
       throw new Error(`Failed to fetch shock heatmap: ${error}`);
     }

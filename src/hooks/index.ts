@@ -35,51 +35,63 @@ function useApi<T>(
 
 // Specific hooks for different data types
 export const useRegimeData = () => {
-  return useApi(() => api.regime.getRegimeData(), []);
+  const fetcher = useCallback(() => api.regime.getRegimeData(), []);
+  return useApi(fetcher, []);
 };
 
 export const useRegimeTimeseries = (horizon: string = '90d') => {
-  return useApi(() => api.regime.getRegimeTimeseries(horizon), [horizon]);
+  const fetcher = useCallback(() => api.regime.getRegimeTimeseries(horizon), [horizon]);
+  return useApi(fetcher, [horizon]);
 };
 
 export const useShockData = () => {
-  return useApi(() => api.shock.getShockData(), []);
+  const fetcher = useCallback(() => api.shock.getShockHeatmap(), []);
+  return useApi(fetcher, []);
 };
 
 export const useShockHeatmap = () => {
-  return useApi(() => api.shock.getShockHeatmap(), []);
+  const fetcher = useCallback(() => api.shock.getShockHeatmap(), []);
+  return useApi(fetcher, []);
 };
 
 export const useMispricedMarkets = () => {
-  return useApi(() => api.market.getMispricedMarkets(), []);
+  const fetcher = useCallback(() => api.market.getMispricedMarkets(), []);
+  return useApi(fetcher, []);
 };
 
 export const useMarketDetails = (marketId: string) => {
-  return useApi(() => api.market.getMarketDetails(marketId), [marketId]);
+  const fetcher = useCallback(() => api.market.getMarketDetails(marketId), [marketId]);
+  return useApi(fetcher, [marketId]);
 };
 
 export const useRecommendations = () => {
-  return useApi(() => api.trade.getRecommendations(), []);
+  const fetcher = useCallback(() => api.trade.getRecommendations(), []);
+  return useApi(fetcher, []);
 };
 
 export const useRecommendation = (id: string) => {
-  return useApi(() => api.trade.getRecommendation(id), [id]);
+  const fetcher = useCallback(() => api.trade.getRecommendation(id), [id]);
+  return useApi(fetcher, [id]);
 };
 
 export const useLiquidityData = () => {
-  return useApi(() => api.widget.getLiquidityData(), []);
+  const fetcher = useCallback(() => api.widget.getLiquidityData(), []);
+  return useApi(fetcher, []);
 };
 
 export const useVolatilityData = () => {
-  return useApi(() => api.widget.getVolatilityData(), []);
+  const fetcher = useCallback(() => api.widget.getVolatilityData(), []);
+  return useApi(fetcher, []);
 };
 
 export const useNewsTicker = () => {
-  return useApi(() => api.widget.getNewsTicker(), []);
+  const fetcher = useCallback(() => api.widget.getNewsTicker(), []);
+  return useApi(fetcher, []);
 };
 
 export const useSystemStatus = () => {
-  return useApi(() => api.status.getSystemStatus(), []);
+  const fetcher = useCallback(() => api.status.getSystemStatus(), []);
+  return useApi(fetcher, []);
 };
 
 // Chat hook with message handling

@@ -30,7 +30,7 @@ const ShockHeatmap: React.FC<ShockHeatmapProps> = ({ data, isLoading, error }) =
     );
   }
 
-  if (error || !data) {
+  if (error || !data || !Array.isArray(data)) {
     return (
       <Card>
         <CardHeader>
@@ -39,6 +39,28 @@ const ShockHeatmap: React.FC<ShockHeatmapProps> = ({ data, isLoading, error }) =
         <CardContent>
           <div className="flex items-center justify-center h-64 text-[#F43F5E]">
             {error || 'No data available'}
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  // Ensure data is properly structured as 2D array
+  let flatData;
+  try {
+    flatData = data.flat();
+    if (!Array.isArray(flatData) || flatData.length === 0) {
+      throw new Error('Invalid data structure');
+    }
+  } catch (err) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle>Narrative Shock Heatmap</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="flex items-center justify-center h-64 text-[#F43F5E]">
+            Invalid data format
           </div>
         </CardContent>
       </Card>
@@ -56,7 +78,7 @@ const ShockHeatmap: React.FC<ShockHeatmapProps> = ({ data, isLoading, error }) =
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-3 gap-3">
-            {data.flat().map((domain, index) => (
+            {flatData.map((domain, index) => (
               <motion.div
                 key={domain.domain}
                 initial={{ opacity: 0, scale: 0.8 }}

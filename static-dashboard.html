@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MacroCycle AI Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .gradient-glow {
+            background: linear-gradient(135deg, rgba(255,165,0,0.1) 0%, rgba(255,165,0,0.05) 100%);
+        }
+    </style>
+</head>
+<body class="bg-[#0A0A0B] text-white min-h-screen">
+    <!-- Header -->
+    <header class="border-b border-[#27272A] bg-[#0F0F10]">
+        <div class="container mx-auto px-6 py-4">
+            <div class="flex items-center justify-between">
+                <h1 class="text-2xl font-bold text-[#FFA500]">MacroCycle AI</h1>
+                <nav class="flex space-x-6">
+                    <a href="#" class="text-[#A1A1AA] hover:text-[#FFA500] transition-colors">Dashboard</a>
+                    <a href="#" class="text-[#A1A1AA] hover:text-[#FFA500] transition-colors">About</a>
+                    <a href="#" class="text-[#A1A1AA] hover:text-[#FFA500] transition-colors">Docs</a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Dashboard -->
+    <main class="container mx-auto px-6 py-8">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            
+            <!-- Real Market Data Section -->
+            <div class="lg:col-span-3 bg-[#09090B] border border-[#27272A] rounded-2xl p-6 relative overflow-hidden">
+                <div class="absolute inset-0 gradient-glow opacity-10 pointer-events-none"></div>
+                <div class="relative">
+                    <div class="flex items-center justify-between mb-6">
+                        <h2 class="text-xl font-semibold flex items-center space-x-2">
+                            <span class="w-2 h-2 bg-[#10B981] rounded-full animate-pulse"></span>
+                            <span>Real Market Data</span>
+                        </h2>
+                        <span class="text-xs text-[#A1A1AA]">Live</span>
+                    </div>
+                    <div id="market-data" class="text-center text-[#A1A1AA] py-8">
+                        <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-[#FFA500] mx-auto mb-4"></div>
+                        Loading market data...
+                    </div>
+                </div>
+            </div>
+
+            <!-- AI Market Insights Section -->
+            <div class="lg:col-span-2 bg-[#09090B] border border-[#27272A] rounded-2xl p-6 relative overflow-hidden">
+                <div class="absolute inset-0 gradient-glow opacity-10 pointer-events-none"></div>
+                <div class="relative">
+                    <h2 class="text-xl font-semibold mb-6 flex items-center space-x-2">
+                        <span>AI Market Insights</span>
+                    </h2>
+                    <div id="ai-insights" class="text-center text-[#A1A1AA] py-8">
+                        <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-[#FFA500] mx-auto mb-4"></div>
+                        Loading AI insights...
+                    </div>
+                </div>
+            </div>
+
+            <!-- Regime Analysis -->
+            <div class="bg-[#09090B] border border-[#27272A] rounded-2xl p-6 relative overflow-hidden">
+                <div class="absolute inset-0 gradient-glow opacity-10 pointer-events-none"></div>
+                <div class="relative">
+                    <h2 class="text-xl font-semibold mb-6">Macro Regime</h2>
+                    <div id="regime-data" class="text-center text-[#A1A1AA] py-8">
+                        <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-[#FFA500] mx-auto mb-4"></div>
+                        Loading regime data...
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <script>
+        const SUPABASE_URL = 'https://jegrpysiqarjhdeszhdc.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImplZ3JweXNpcWFyamhkZXN6aGRjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU0NzE0ODMsImV4cCI6MjA4MTA0NzQ4M30.puyI6SGq6DvMcYw-HfwgZSrEQmHRCb2AgLGKBe16B-M';
+
+        async function fetchWithAuth(url) {
+            const response = await fetch(url, {
+                headers: {
+                    'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+                    'apikey': SUPABASE_ANON_KEY,
+                    'Content-Type': 'application/json',
+                }
+            });
+            
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            
+            return await response.json();
+        }
+
+        async function loadMarketData() {
+            try {
+                const data = await fetchWithAuth(`${SUPABASE_URL}/functions/v1/real-market-data`);
+                const marketData = data.data;
+                
+                document.getElementById('market-data').innerHTML = `
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-left">
+                        <div class="bg-[#0F0F10] p-4 rounded-lg">
+                            <h3 class="text-[#A1A1AA] text-sm mb-2">S&P 500</h3>
+                            <div class="text-2xl font-bold text-[#10B981]">${marketData.sp500.price.toFixed(2)}</div>
+                            <div class="text-sm ${marketData.sp500.change >= 0 ? 'text-[#10B981]' : 'text-[#F43F5E]'}">
+                                ${marketData.sp500.change >= 0 ? '+' : ''}${marketData.sp500.change.toFixed(2)} (${marketData.sp500.changePercent.toFixed(2)}%)
+                            </div>
+                        </div>
+                        <div class="bg-[#0F0F10] p-4 rounded-lg">
+                            <h3 class="text-[#A1A1AA] text-sm mb-2">VIX</h3>
+                            <div class="text-2xl font-bold ${marketData.vix.level === 'low' ? 'text-[#10B981]' : marketData.vix.level === 'high' ? 'text-[#F43F5E]' : 'text-[#FFA500]'}">${marketData.vix.price.toFixed(2)}</div>
+                            <div class="text-sm text-[#A1A1AA]">${marketData.vix.level.toUpperCase()} Volatility</div>
+                        </div>
+                        <div class="bg-[#0F0F10] p-4 rounded-lg">
+                            <h3 class="text-[#A1A1AA] text-sm mb-2">Treasury Yield</h3>
+                            <div class="text-2xl font-bold text-[#FFA500]">${marketData.treasuryYield.price.toFixed(3)}%</div>
+                            <div class="text-sm ${marketData.treasuryYield.change >= 0 ? 'text-[#F43F5E]' : 'text-[#10B981]'}">
+                                ${marketData.treasuryYield.change >= 0 ? '+' : ''}${marketData.treasuryYield.change.toFixed(3)}%
+                            </div>
+                        </div>
+                    </div>
+                `;
+            } catch (error) {
+                document.getElementById('market-data').innerHTML = `
+                    <div class="text-[#F43F5E] py-4">
+                        Error loading market data: ${error.message}
+                    </div>
+                `;
+            }
+        }
+
+        async function loadAIInsights() {
+            try {
+                const data = await fetchWithAuth(`${SUPABASE_URL}/functions/v1/ai-insights`);
+                const insights = data.data;
+                
+                document.getElementById('ai-insights').innerHTML = insights.map(insight => `
+                    <div class="bg-[#0F0F10] p-4 rounded-lg mb-4 border-l-4 ${insight.type === 'bullish' ? 'border-[#10B981]' : insight.type === 'bearish' ? 'border-[#F43F5E]' : 'border-[#FFA500]'}">
+                        <div class="flex items-start space-x-3">
+                            <div class="flex-shrink-0">
+                                ${insight.icon === 'TrendingUp' ? '📈' : insight.icon === 'AlertTriangle' ? '⚠️' : '🧠'}
+                            </div>
+                            <div class="flex-1">
+                                <h3 class="font-semibold text-white mb-2">${insight.title}</h3>
+                                <p class="text-[#A1A1AA] text-sm mb-2">${insight.description}</p>
+                                <div class="flex items-center justify-between">
+                                    <span class="text-xs text-[#A1A1AA]">Confidence: ${insight.confidence}</span>
+                                    <span class="text-xs px-2 py-1 rounded ${insight.type === 'bullish' ? 'bg-[#10B981]/20 text-[#10B981]' : insight.type === 'bearish' ? 'bg-[#F43F5E]/20 text-[#F43F5E]' : 'bg-[#FFA500]/20 text-[#FFA500]'}">${insight.type.toUpperCase()}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            } catch (error) {
+                document.getElementById('ai-insights').innerHTML = `
+                    <div class="text-[#F43F5E] py-4">
+                        Error loading AI insights: ${error.message}
+                    </div>
+                `;
+            }
+        }
+
+        async function loadRegimeData() {
+            try {
+                const data = await fetchWithAuth(`${SUPABASE_URL}/functions/v1/regime-analysis`);
+                const regime = data.data;
+                
+                document.getElementById('regime-data').innerHTML = `
+                    <div class="text-center">
+                        <div class="text-3xl font-bold text-[#FFA500] mb-2">${regime.current.probability}%</div>
+                        <div class="text-[#A1A1AA] mb-4">${regime.current.primary} Regime</div>
+                        <div class="text-sm text-[#A1A1AA]">Confidence: ${regime.current.horizon}</div>
+                    </div>
+                `;
+            } catch (error) {
+                document.getElementById('regime-data').innerHTML = `
+                    <div class="text-[#F43F5E] py-4">
+                        Error loading regime data: ${error.message}
+                    </div>
+                `;
+            }
+        }
+
+        // Load all data on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            loadMarketData();
+            loadAIInsights();
+            loadRegimeData();
+            
+            // Refresh data every 30 seconds
+            setInterval(() => {
+                loadMarketData();
+                loadAIInsights();
+                loadRegimeData();
+            }, 30000);
+        });
+    </script>
+</body>
+</html>

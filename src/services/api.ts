@@ -12,12 +12,28 @@ import {
 
 // Supabase Configuration
 const SUPABASE_URL = 'https://jegrpysiqarjhdeszhdc.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImplZ3JweXNpcWFyamhkZXN6aGRjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU0NzE0ODMsImV4cCI6MjA4MTA0NzQ4M30.puyI6SGq6DvMcYw-HfwgZSrEQmHRCb2AgLGKBe16B-M';
 
 // Base API Service following SOLID principles
 abstract class BaseApiService {
-  protected async fetchWithErrorHandling<T>(url: string): Promise<T> {
+  protected async fetchWithErrorHandling<T>(url: string, options: RequestInit = {}): Promise<T> {
     try {
-      const response = await fetch(url);
+      // Add Supabase headers if calling Supabase functions
+      const isSupabaseFunction = url.includes('/functions/v1/');
+      const headers = {
+        'Content-Type': 'application/json',
+        ...(isSupabaseFunction && {
+          'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+          'apikey': SUPABASE_ANON_KEY,
+        }),
+        ...options.headers,
+      };
+
+      const response = await fetch(url, {
+        ...options,
+        headers,
+      });
+
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
@@ -26,6 +42,23 @@ abstract class BaseApiService {
       console.error(`API Error for ${url}:`, error);
       throw error;
     }
+  }
+
+  protected async fetchSupabaseFunction<T>(url: string, method: 'GET' | 'POST' = 'GET', body?: any): Promise<T> {
+    const options: RequestInit = {
+      method,
+      headers: {
+        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+        'apikey': SUPABASE_ANON_KEY,
+        'Content-Type': 'application/json',
+      },
+    };
+
+    if (body && method === 'POST') {
+      options.body = JSON.stringify(body);
+    }
+
+    return this.fetchWithErrorHandling<T>(url, options);
   }
 
   protected createApiResponse<T>(data: T, message?: string): ApiResponse<T> {
@@ -42,7 +75,7 @@ abstract class BaseApiService {
 export class RegimeService extends BaseApiService {
   async getRegimeData(): Promise<ApiResponse<RegimeData>> {
     try {
-      const response = await this.fetchWithErrorHandling<{ data: RegimeData }>(`${SUPABASE_URL}/functions/v1/regime-analysis`);
+      const response = await this.fetchSupabaseFunction<{ data: RegimeData }>(`${SUPABASE_URL}/functions/v1/regime-analysis`);
       return this.createApiResponse(response.data);
     } catch (error) {
       throw new Error(`Failed to fetch regime data: ${error}`);
@@ -51,7 +84,7 @@ export class RegimeService extends BaseApiService {
 
   async getRegimeTimeseries(horizon: string = '90d'): Promise<ApiResponse<RegimeData['timeseries']>> {
     try {
-      const response = await this.fetchWithErrorHandling<{ data: RegimeData }>(`${SUPABASE_URL}/functions/v1/regime-analysis`);
+      const response = await this.fetchSupabaseFunction<{ data: RegimeData }>(`${SUPABASE_URL}/functions/v1/regime-analysis`);
       return this.createApiResponse(response.data.timeseries);
     } catch (error) {
       throw new Error(`Failed to fetch regime timeseries: ${error}`);
@@ -156,7 +189,7 @@ export class WidgetService extends BaseApiService {
 export class RealMarketService extends BaseApiService {
   async getRealMarketData(): Promise<ApiResponse<any>> {
     try {
-      const response = await this.fetchWithErrorHandling<{ data: any }>(`${SUPABASE_URL}/functions/v1/real-market-data`);
+      const response = await this.fetchSupabaseFunction<{ data: any }>(`${SUPABASE_URL}/functions/v1/real-market-data`);
       return this.createApiResponse(response.data);
     } catch (error) {
       throw new Error(`Failed to fetch real market data: ${error}`);
@@ -165,10 +198,22 @@ export class RealMarketService extends BaseApiService {
 
   async getAIInsights(): Promise<ApiResponse<any>> {
     try {
-      const response = await this.fetchWithErrorHandling<{ data: any }>(`${SUPABASE_URL}/functions/v1/ai-insights`);
+      const response = await this.fetchSupabaseFunction<{ data: any }>(`${SUPABASE_URL}/functions/v1/ai-insights`);
       return this.createApiResponse(response.data);
     } catch (error) {
       throw new Error(`Failed to fetch AI insights: ${error}`);
+    }
+  }
+
+  async getEnhancedAnalysis(): Promise<ApiResponse<any>> {
+    try {
+      const response = await this.fetchSupabaseFunction<{ data: any }>(`${SUPABASE_URL}/functions/v1/ai-enhanced`, 'POST', {
+        market_data: 'current',
+        analysis_type: 'comprehensive'
+      });
+      return this.createApiResponse(response.data);
+    } catch (error) {
+      throw new Error(`Failed to fetch enhanced analysis: ${error}`);
     }
   }
 }
@@ -177,20 +222,12 @@ export class RealMarketService extends BaseApiService {
 export class ChatService extends BaseApiService {
   async sendMessage(message: string): Promise<ApiResponse<ChatResponse>> {
     try {
-      const response = await fetch(`${SUPABASE_URL}/functions/v1/ai-chat`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ message }),
-      });
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      const data = await response.json();
-      return this.createApiResponse(data.data);
+      const response = await this.fetchSupabaseFunction<{ data: ChatResponse }>(
+        `${SUPABASE_URL}/functions/v1/ai-chat`,
+        'POST',
+        { message }
+      );
+      return this.createApiResponse(response.data);
     } catch (error) {
       throw new Error(`Failed to send chat message: ${error}`);
     }

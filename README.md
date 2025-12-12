@@ -78,7 +78,21 @@ yarn install
 pnpm install
 ```
 
-3. **Start the development server**
+3. **Configure Environment Variables**
+```bash
+# Copy the example environment file
+cp .env.local.example .env.local
+
+# Edit .env.local with your configuration
+```
+
+**Required Environment Variables:**
+```env
+NEXT_PUBLIC_SUPABASE_URL=https://jegrpysiqarjhdeszhdc.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImplZ3JweXNpcWFyamhkZXN6aGRjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU0NzE0ODMsImV4cCI6MjA4MTA0NzQ4M30.puyI6SGq6DvMcYw-HfwgZSrEQmHRCb2AgLGKBe16B-M
+```
+
+4. **Start the development server**
 ```bash
 npm run dev
 # or
@@ -87,10 +101,91 @@ yarn dev
 pnpm dev
 ```
 
-4. **Open your browser**
+5. **Open your browser**
 Navigate to [http://localhost:3000](http://localhost:3000)
 
+### 🔧 Supabase Configuration
+
+The dashboard uses Supabase Edge Functions for real-time market data and AI analysis. The functions are already deployed and configured with:
+
+- **Project ID**: `jegrpysiqarjhdeszhdc`
+- **Functions**: `real-market-data`, `ai-insights`, `ai-enhanced`, `regime-analysis`, `ai-chat`
+- **API Key**: Included in `.env.local`
+
+#### Available Supabase Functions:
+- `real-market-data` - Live S&P 500, VIX, Treasury yields
+- `ai-insights` - Market analysis and insights
+- `ai-enhanced` - Enhanced AI with OpenRouter integration
+- `regime-analysis` - Market regime detection
+- `ai-chat` - Interactive AI chat functionality
+
 ## 🛠️ Development
+
+### 🐛 Troubleshooting
+
+#### Common Issues and Solutions
+
+**1. 401 Unauthorized Errors**
+If you see 401 errors when the dashboard tries to fetch data:
+
+```
+API Error for https://jegrpysiqarjhdeszhdc.supabase.co/functions/v1/regime-analysis: Error: HTTP error! status: 401
+```
+
+**Solution:**
+- Ensure `.env.local` file exists with the correct Supabase credentials
+- Verify the `NEXT_PUBLIC_SUPABASE_ANON_KEY` is properly set
+- Check that the Supabase project is active and functions are deployed
+
+**2. 404 Not Found Errors**
+If you see 404 errors for API endpoints:
+
+```
+Failed to load resource: the server responded with a status of 404 (Not Found)
+```
+
+**Solution:**
+- Ensure all Supabase Edge Functions are deployed
+- Check function names match the API calls
+- Verify the Supabase project URL is correct
+
+**3. Build Errors**
+If the build fails:
+
+```bash
+# Clear Next.js cache and node_modules
+rm -rf .next node_modules
+npm install
+npm run build
+```
+
+**4. Missing Environment Variables**
+If you see undefined environment variables:
+
+```bash
+# Check if .env.local exists
+ls -la .env.local
+
+# If missing, copy from example
+cp .env.local.example .env.local
+```
+
+#### Environment File Setup
+
+Create `.env.local` in the root directory:
+
+```env
+# Supabase Configuration
+NEXT_PUBLIC_SUPABASE_URL=https://jegrpysiqarjhdeszhdc.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImplZ3JweXNpcWFyamhkZXN6aGRjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU0NzE0ODMsImV4cCI6MjA4MTA0NzQ4M30.puyI6SGq6DvMcYw-HfwgZSrEQmHRCb2AgLGKBe16B-M
+
+# Optional: OpenRouter API Key for enhanced AI features
+# Get your key from: https://openrouter.ai/
+NEXT_PUBLIC_OPENROUTER_API_KEY=your_openrouter_key_here
+
+# Development
+NODE_ENV=development
+```
 
 ### Available Scripts
 

@@ -19,7 +19,7 @@ const ShockHeatmap: React.FC<ShockHeatmapProps> = ({ data, isLoading, error }) =
     return (
       <Card>
         <CardHeader>
-          <CardTitle>Narrative Shock Heatmap</CardTitle>
+          <CardTitle className="text-white">Narrative Shock Heatmap</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="flex items-center justify-center h-64">
@@ -187,7 +187,7 @@ const ShockHeatmap: React.FC<ShockHeatmapProps> = ({ data, isLoading, error }) =
     <>
       <Card className="col-span-2" hover>
         <CardHeader>
-          <CardTitle>Narrative Shock Heatmap</CardTitle>
+          <CardTitle className="text-white">Narrative Shock Heatmap</CardTitle>
           <p className="text-xs text-[#A1A1AA]">
             3×3 grid showing shock intensity across domains
           </p>

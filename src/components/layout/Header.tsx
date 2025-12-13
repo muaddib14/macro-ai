@@ -60,7 +60,6 @@ const Header: React.FC<HeaderProps> = ({ className }) => {
             { label: 'Dashboard', href: '/', isActive: true },
             { label: 'Documentation', href: '/docs' },
             { label: 'How It Works', href: '/how' },
-            { label: 'Roadmap', href: '/roadmap' },
             { label: 'About', href: '/about' },
           ].map((item) => (
             <Link key={item.href} href={item.href}>

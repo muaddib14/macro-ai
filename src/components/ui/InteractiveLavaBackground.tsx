@@ -11,11 +11,22 @@ interface Orb {
   color: string;
 }
 
+interface Particle {
+  x: number;
+  y: number;
+  radius: number;
+  baseRadius: number;
+  dx: number;
+  dy: number;
+  color: string;
+}
+
 export const InteractiveLavaBackground = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const orbs = useRef<Orb[]>([]);
-  const mouse = useRef({ x: 0, y: 0 });
+  const particles = useRef<Particle[]>([]);
+  const mouse = useRef({ x: 0, y: 0, radius: 150 });
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -27,10 +38,18 @@ export const InteractiveLavaBackground = () => {
 
     let animationFrameId: number;
 
+    // Lava color palette
+    const colorPalette = {
+      primary: 'rgba(255, 165, 0, 0.6)', // Orange, increased opacity
+      secondary: 'rgba(255, 85, 0, 0.6)', // Red, increased opacity
+      tertiary: 'rgba(113, 113, 122, 0.2)' // Gray for lines (not used now)
+    };
+
     const resize = () => {
       canvas.width = container.offsetWidth;
       canvas.height = container.offsetHeight;
       initOrbs();
+      initParticles();
     };
 
     const initOrbs = () => {
@@ -56,6 +75,23 @@ export const InteractiveLavaBackground = () => {
           // Large radius for smooth gradients
           radius: Math.random() * 300 + 150, 
           color: colors[Math.floor(Math.random() * colors.length)],
+        });
+      }
+    };
+
+    const initParticles = () => {
+      particles.current = [];
+      const particleCount = Math.min(Math.floor((canvas.width * canvas.height) / 20000), 80);
+
+      for (let i = 0; i < particleCount; i++) {
+        particles.current.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height,
+          baseRadius: Math.random() * 4 + 2, // Bigger particles
+          radius: Math.random() * 4 + 2,
+          dx: (Math.random() - 0.5) * 0.3,
+          dy: (Math.random() - 0.5) * 0.3,
+          color: Math.random() > 0.5 ? colorPalette.primary : colorPalette.secondary,
         });
       }
     };
@@ -104,6 +140,42 @@ export const InteractiveLavaBackground = () => {
         ctx.fill();
       });
 
+      // Draw particles
+      ctx.globalCompositeOperation = 'source-over';
+      particles.current.forEach((particle) => {
+        // Update particle position
+        if (particle.x + particle.radius > canvas.width || particle.x - particle.radius < 0) particle.dx = -particle.dx;
+        if (particle.y + particle.radius > canvas.height || particle.y - particle.radius < 0) particle.dy = -particle.dy;
+
+        particle.x += particle.dx;
+        particle.y += particle.dy;
+
+        // Mouse interactivity
+        const dxMouse = mouse.current.x - particle.x;
+        const dyMouse = mouse.current.y - particle.y;
+        const distanceMouse = Math.sqrt(dxMouse * dxMouse + dyMouse * dyMouse);
+
+        if (distanceMouse < mouse.current.radius) {
+          if (particle.radius < particle.baseRadius * 3) {
+            particle.radius += 0.2;
+          }
+        } else if (particle.radius > particle.baseRadius) {
+          particle.radius -= 0.05;
+        }
+
+        // Draw particle with glow
+        ctx.shadowColor = particle.color;
+        ctx.shadowBlur = 15;
+        ctx.beginPath();
+        ctx.arc(particle.x, particle.y, particle.radius, 0, Math.PI * 2, false);
+        ctx.fillStyle = particle.color;
+        ctx.fill();
+        ctx.shadowBlur = 0; // Reset shadow
+      });
+
+      // Connect particles
+      // connectParticles(); // Removed connecting lines
+
       animationFrameId = requestAnimationFrame(animate);
     };
 
@@ -112,6 +184,7 @@ export const InteractiveLavaBackground = () => {
       mouse.current = {
         x: e.clientX - rect.left,
         y: e.clientY - rect.top,
+        radius: 150,
       };
     };
 

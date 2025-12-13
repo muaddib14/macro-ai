@@ -443,10 +443,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - **Documentation**: https://docs.macrocycle.ai
 - **Status Page**: https://status.macrocycle.ai
 
-## 🗺️ Roadmap
-
-See our [Roadmap](src/app/roadmap/page.tsx) page for detailed development plans and performance metrics.
-
 ---
 
 **Built with ❤️ by MiniMax Agent**

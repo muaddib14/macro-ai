@@ -1,7 +1,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { Activity, Clock, Settings, Zap } from 'lucide-react';
+import { Activity, Clock, Settings } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { cn } from '@/utils';
 
@@ -31,14 +31,16 @@ const Header: React.FC<HeaderProps> = ({ className }) => {
             whileHover={{ scale: 1.05 }}
             className="flex items-center space-x-4"
           >
-            {/* Glowing Logo Icon */}
+            {/* Logo Image */}
             <div className="relative">
-              <div className="w-12 h-12 bg-gradient-to-br from-[#FFC850] to-[#FF5500] rounded-full flex items-center justify-center relative">
-                <Zap className="h-6 w-6 text-[#050505]" />
-                {/* Glow Effect */}
-                <div className="absolute inset-0 bg-gradient-to-br from-[#FFC850] to-[#FF5500] rounded-full blur-md opacity-70" />
-                <div className="absolute inset-0 bg-gradient-to-br from-[#FFC850] to-[#FF5500] rounded-full blur-lg opacity-50" />
-              </div>
+              <img 
+                src="/logo.jpeg" 
+                alt="MacroCycle AI Logo" 
+                className="w-12 h-12 rounded-full object-cover border-2 border-[#FFC850]/30"
+              />
+              {/* Glow Effect */}
+              <div className="absolute inset-0 bg-gradient-to-br from-[#FFC850] to-[#FF5500] rounded-full blur-md opacity-30" />
+              <div className="absolute inset-0 bg-gradient-to-br from-[#FFC850] to-[#FF5500] rounded-full blur-lg opacity-20" />
             </div>
             
             <div>
@@ -53,18 +55,18 @@ const Header: React.FC<HeaderProps> = ({ className }) => {
         </Link>
 
         {/* Navigation */}
-        <nav className="hidden lg:flex items-center space-x-8">
+        <nav className="hidden lg:flex items-center space-x-6">
           {[
             { label: 'Dashboard', href: '/', isActive: true },
-            { label: 'Analytics', href: '/analytics' },
-            { label: 'AI Chat', href: '/chat' },
+            { label: 'Documentation', href: '/docs' },
             { label: 'How It Works', href: '/how' },
+            { label: 'Roadmap', href: '/roadmap' },
             { label: 'About', href: '/about' },
           ].map((item) => (
             <Link key={item.href} href={item.href}>
               <motion.div
                 whileHover={{ scale: 1.05 }}
-                className={`text-sm font-semibold transition-all duration-300 px-4 py-2 rounded-lg ${
+                className={`text-sm font-semibold transition-all duration-300 px-3 py-2 rounded-lg ${
                   item.isActive
                     ? 'text-[#FFC850] bg-[#FF5500]/20 border border-[#FF5500]/30'
                     : 'text-[#FF9500] hover:text-[#FFC850] hover:bg-[#FF5500]/10'

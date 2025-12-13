@@ -4,44 +4,84 @@
 @tailwind components;
 @tailwind utilities;
 
-/* CSS Custom Properties - Dark Hot Glow Theme */
 @layer base {
   :root {
-    /* Color System */
-    --color-bg: #050505;
-    --color-surface: #080400;
-    --color-foreground: #FFC850;
-    --color-muted: #FF9500;
-    --color-primary: #FFC850;
-    --color-secondary: #FF5500;
-    --color-accent: #FF9500;
-    --color-border: #CC4400;
+    /* Lava Theme Color Map (HSL Values) 
+      Used by tailwind.config.js to theme UI components 
+    */
     
-    /* Semantic Colors */
-    --color-success: #10B981;
-    --color-error: #F43F5E;
-    --color-warning: #F59E0B;
+    /* Background: #050505 (Deep Black) */
+    --background: 0 0% 2%; 
     
-    /* Typography */
-    --font-heading: 'Orbitron', monospace;
-    --font-body: ';
-    --fontInter', sans-serif-mono: 'JetBrains Mono', monospace;
-    
-    /* Spacing & Layout */
-    --container-padding: 2rem;
-    --border-radius: 0.75rem;
-    --border-radius-lg: 1rem;
-    --border-radius-xl: 1.5rem;
-    
-    /* Effects */
+    /* Foreground: #FFC850 (Glowing Amber) */
+    --foreground: 41 100% 66%; 
+
+    /* Card Background: #080400 (Darker Magma) */
+    --card: 24 100% 2%;
+    --card-foreground: 41 100% 66%;
+ 
+    /* Popovers */
+    --popover: 24 100% 2%;
+    --popover-foreground: 41 100% 66%;
+ 
+    /* Primary: #FF5500 (Lava Orange/Red) */
+    --primary: 20 100% 50%;
+    --primary-foreground: 0 0% 98%;
+ 
+    /* Secondary: #FF9500 (Bright Orange) */
+    --secondary: 36 100% 50%;
+    --secondary-foreground: 0 0% 9%;
+ 
+    /* Muted: #3F2F1A (Burnt Earth) */
+    --muted: 34 41% 17%;
+    --muted-foreground: 36 100% 70%;
+ 
+    /* Accent: #FF5500 (Lava Red Highlight) */
+    --accent: 20 100% 50%;
+    --accent-foreground: 0 0% 98%;
+ 
+    /* Destructive: #F43F5E (Standard Error Red) */
+    --destructive: 346 87% 60%;
+    --destructive-foreground: 0 0% 98%;
+
+    /* Borders: #CC4400 (Dark Orange) */
+    --border: 20 100% 40%;
+    --input: 20 100% 40%;
+    --ring: 20 100% 50%;
+ 
+    --radius: 0.75rem;
+
+    /* Custom Lava Variables */
     --glow-primary: 0 0 20px rgba(255, 165, 0, 0.4);
     --glow-secondary: 0 0 30px rgba(255, 85, 0, 0.3);
     --glow-intense: 0 0 40px rgba(204, 68, 0, 0.2);
   }
+ 
+  .dark {
+    /* Ensure dark mode uses same palette since layout is always dark */
+    --background: 0 0% 2%;
+    --foreground: 41 100% 66%;
+    --card: 24 100% 2%;
+    --card-foreground: 41 100% 66%;
+    --popover: 24 100% 2%;
+    --popover-foreground: 41 100% 66%;
+    --primary: 20 100% 50%;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 36 100% 50%;
+    --secondary-foreground: 0 0% 9%;
+    --muted: 34 41% 17%;
+    --muted-foreground: 36 100% 70%;
+    --accent: 20 100% 50%;
+    --accent-foreground: 0 0% 98%;
+    --destructive: 346 87% 60%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 20 100% 40%;
+    --input: 20 100% 40%;
+    --ring: 20 100% 50%;
+  }
 }
 
 @layer base {
-  /* Reset & Base Styles */
   * {
     @apply border-border;
   }
@@ -51,12 +91,14 @@
   }
   
   body {
-    @apply bg-[#050505] text-[#FFC850] font-body antialiased;
+    @apply bg-background text-foreground font-sans antialiased;
+    /* Use the lava background color explicitly */
+    background-color: #050505; 
     font-feature-settings: "rlig" 1, "calt" 1;
     min-height: 100vh;
     overflow-x: hidden;
   }
-  
+
   /* Scrollbar Styling */
   ::-webkit-scrollbar {
     width: 8px;
@@ -64,47 +106,31 @@
   }
   
   ::-webkit-scrollbar-track {
-    @apply bg-[#080400];
+    background: #080400;
   }
   
   ::-webkit-scrollbar-thumb {
-    @apply bg-[#FF5500] rounded-full;
+    background: #FF5500;
+    border-radius: 9999px;
     transition: background-color 0.2s ease;
   }
   
   ::-webkit-scrollbar-thumb:hover {
-    @apply bg-[#FFC850];
-  }
-  
-  /* Selection & Focus */
-  ::selection {
-    @apply bg-[#FFC850] text-[#050505];
-  }
-  
-  :focus-visible {
-    @apply outline-none ring-2 ring-[#FFC850] ring-offset-2 ring-offset-[#050505];
-  }
-  
-  /* Remove default button styles */
-  button {
-    @apply cursor-pointer;
-  }
-  
-  /* Image optimization */
-  img {
-    @apply max-w-full h-auto;
+    background: #FFC850;
   }
 }
 
 @layer components {
   /* Typography Components */
   .heading-primary {
-    @apply font-heading font-bold text-4xl md:text-6xl lg:text-8xl text-[#FFC850] tracking-wider;
+    @apply font-bold text-4xl md:text-6xl lg:text-8xl text-foreground tracking-wider;
+    font-family: 'Orbitron', monospace;
     text-shadow: 0 0 20px rgba(255, 165, 0, 0.5);
   }
   
   .heading-secondary {
-    @apply font-heading font-semibold text-2xl md:text-3xl text-[#FF9500];
+    @apply font-semibold text-2xl md:text-3xl text-secondary;
+    font-family: 'Orbitron', monospace;
   }
   
   .text-glow {
@@ -115,13 +141,9 @@
       0 0 40px rgba(255, 85, 0, 0.4);
   }
   
-  .text-gradient-primary {
-    @apply bg-gradient-to-r from-[#FFC850] to-[#FF5500] bg-clip-text text-transparent;
-  }
-  
   /* Button Components */
   .btn-primary {
-    @apply px-6 py-3 bg-gradient-to-r from-[#FFC850] to-[#FF5500] text-[#050505] font-semibold rounded-lg;
+    @apply px-6 py-3 bg-gradient-to-r from-[#FFC850] to-[#FF5500] text-black font-semibold rounded-lg;
     box-shadow: 
       0 0 20px rgba(255, 165, 0, 0.4),
       0 4px 15px rgba(255, 85, 0, 0.3);
@@ -135,33 +157,6 @@
       0 6px 20px rgba(255, 85, 0, 0.4);
   }
   
-  .btn-secondary {
-    @apply px-6 py-3 border-2 border-[#FF5500] text-[#FF9500] font-semibold rounded-lg;
-    @apply hover:bg-[#FF5500] hover:text-[#050505] transition-all duration-300;
-  }
-  
-  /* Card Components */
-  .card-base {
-    @apply bg-[#080400] border border-[#CC4400]/30 rounded-lg p-6;
-    backdrop-filter: blur(8px);
-  }
-  
-  .card-glow {
-    @apply card-base;
-    box-shadow: 
-      0 0 20px rgba(255, 165, 0, 0.1),
-      inset 0 1px 0 rgba(255, 165, 0, 0.1);
-  }
-  
-  /* Layout Components */
-  .container-app {
-    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
-  }
-  
-  .section-padding {
-    @apply py-16 lg:py-24;
-  }
-  
   /* Background Effects */
   .bg-ambient-glow {
     background: 
@@ -169,196 +164,26 @@
       radial-gradient(circle at 80% 80%, rgba(255, 85, 0, 0.08) 0%, transparent 50%),
       radial-gradient(circle at 50% 50%, rgba(204, 68, 0, 0.05) 0%, transparent 50%);
   }
-  
-  .bg-cinematic-grain {
-    position: relative;
-  }
-  
-  .bg-cinematic-grain::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    opacity: 0.03;
-    background-image: 
-      radial-gradient(circle at 25% 25%, #FFC850 1px, transparent 1px),
-      radial-gradient(circle at 75% 75%, #FF5500 1px, transparent 1px);
-    background-size: 3px 3px, 2px 2px;
-    pointer-events: none;
-  }
 }
 
 @layer utilities {
-  /* Scroll Utilities */
-  .scrollbar-hide {
-    -ms-overflow-style: none;
-    scrollbar-width: none;
-  }
-  
-  .scrollbar-hide::-webkit-scrollbar {
-    display: none;
-  }
-  
-  /* Effect Utilities */
-  .glass-effect {
-    background: rgba(5, 5, 5, 0.8);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 85, 0, 0.2);
-  }
-  
-  .neon-border {
-    box-shadow: 
-      0 0 5px rgba(255, 165, 0, 0.6),
-      0 0 10px rgba(255, 85, 0, 0.4),
-      inset 0 0 5px rgba(255, 165, 0, 0.1);
-    border: 1px solid rgba(255, 165, 0, 0.4);
-  }
-  
-  /* Shadow Utilities */
-  .shadow-glow-primary {
-    box-shadow: var(--glow-primary);
-  }
-  
-  .shadow-glow-secondary {
-    box-shadow: var(--glow-secondary);
-  }
-  
-  .shadow-glow-intense {
-    box-shadow: var(--glow-intense);
-  }
-  
-  /* Animation Utilities */
-  .animate-fade-in {
-    animation: fadeIn 0.5s ease-in-out forwards;
-  }
-  
-  .animate-slide-up {
-    animation: slideUp 0.6s ease-out forwards;
+  .shadow-glow {
+    box-shadow: 0 0 20px rgba(255, 165, 0, 0.5);
   }
   
   .animate-pulse-glow {
     animation: pulseGlow 2s ease-in-out infinite;
   }
-  
-  .animate-float {
-    animation: float 6s ease-in-out infinite;
-  }
-  
-  /* Layout Utilities */
-  .aspect-square {
-    aspect-ratio: 1 / 1;
-  }
-  
-  .grid-auto-fit {
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  }
-  
-  /* Interaction States */
-  .interactive {
-    @apply transition-all duration-300 ease-out;
-    @apply hover:scale-105 hover:shadow-glow-primary;
-    @apply active:scale-95;
-  }
-  
-  .disabled {
-    @apply opacity-50 cursor-not-allowed pointer-events-none;
-  }
 }
 
 /* Animations */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes slideUp {
-  from {
-    opacity: 0;
-    transform: translateY(30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
 @keyframes pulseGlow {
   0%, 100% {
     opacity: 1;
-    box-shadow: 
-      0 0 20px rgba(255, 165, 0, 0.3),
-      0 0 40px rgba(255, 85, 0, 0.15);
+    box-shadow: 0 0 20px rgba(255, 165, 0, 0.3);
   }
   50% {
     opacity: 0.8;
-    box-shadow: 
-      0 0 30px rgba(255, 165, 0, 0.5),
-      0 0 60px rgba(255, 85, 0, 0.25);
-  }
-}
-
-@keyframes float {
-  0%, 100% {
-    transform: translateY(0px);
-  }
-  50% {
-    transform: translateY(-10px);
-  }
-}
-
-@keyframes grainShift {
-  0%, 100% { transform: translate(0, 0) }
-  10% { transform: translate(-5%, -10%) }
-  20% { transform: translate(-15%, 5%) }
-  30% { transform: translate(7%, -25%) }
-  40% { transform: translate(-5%, 25%) }
-  50% { transform: translate(-15%, 10%) }
-  60% { transform: translate(15%, 0%) }
-  70% { transform: translate(0%, 15%) }
-  80% { transform: translate(3%, 35%) }
-  90% { transform: translate(-10%, 10%) }
-}
-
-@keyframes ambientPulse {
-  0%, 100% {
-    transform: scale(1);
-    opacity: 0.1;
-  }
-  50% {
-    transform: scale(1.05);
-    opacity: 0.2;
-  }
-}
-
-/* Responsive Utilities */
-@media (max-width: 640px) {
-  .container-app {
-    @apply px-4;
-  }
-  
-  .section-padding {
-    @apply py-12;
-  }
-  
-  .heading-primary {
-    @apply text-4xl;
-  }
-}
-
-/* Print Styles */
-@media print {
-  .no-print {
-    display: none !important;
-  }
-  
-  body {
-    background: white !important;
-    color: black !important;
+    box-shadow: 0 0 30px rgba(255, 165, 0, 0.5);
   }
 }

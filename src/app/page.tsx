@@ -70,6 +70,9 @@ export default function Home() {
     };
 
     fetchDashboardData();
+    
+    // Ensure page starts at top
+    window.scrollTo(0, 0);
   }, []);
 
   return (

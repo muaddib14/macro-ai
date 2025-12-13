@@ -137,6 +137,7 @@ export interface ChatResponse {
   confidence: 'low' | 'medium' | 'high';
   kelly_fraction?: number;
   uncertainty_factors: string[];
+  metrics?: TradingMetrics; // Added this property
 }
 
 export type { RealMarketData } from '@/data/realMarketData';

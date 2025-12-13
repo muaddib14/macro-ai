@@ -1,12 +1,11 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { cn } from '@/utils';
-import { LoadingState } from '@/components/ui/Loading';
 
 // Import dashboard components
 import RegimeGauge from './RegimeGauge';
 import ShockHeatmap from './ShockHeatmap';
-import MispricedList from './MispricedList';
+// MispricedList removed
 import Recommendations from './Recommendations';
 import ChatAgent from './ChatAgent';
 import { 
@@ -26,7 +25,7 @@ interface DashboardGridProps {
   shockLoading: boolean;
   shockError: string | null;
   
-  // Market data
+  // Market data - kept in interface for compatibility but unused in UI
   marketData: any;
   marketLoading: boolean;
   marketError: string | null;
@@ -59,9 +58,6 @@ const DashboardGrid: React.FC<DashboardGridProps> = ({
   shockData,
   shockLoading,
   shockError,
-  marketData,
-  marketLoading,
-  marketError,
   recommendationData,
   recommendationLoading,
   recommendationError,
@@ -77,11 +73,11 @@ const DashboardGrid: React.FC<DashboardGridProps> = ({
   className,
 }) => {
   const isAnyLoading = 
-    regimeLoading || shockLoading || marketLoading || 
+    regimeLoading || shockLoading || 
     recommendationLoading || liquidityLoading || volatilityLoading || newsLoading;
 
   const hasAnyError = 
-    regimeError || shockError || marketError || 
+    regimeError || shockError || 
     recommendationError || liquidityError || volatilityError || newsError;
 
   if (hasAnyError) {
@@ -110,7 +106,7 @@ const DashboardGrid: React.FC<DashboardGridProps> = ({
 
   return (
     <div className={cn('grid grid-cols-1 lg:grid-cols-12 gap-6 auto-rows-max', className)}>
-      {/* Row 1: Regime Gauge (spans 4 cols) + Shock Heatmap (spans 4 cols) + Chat Agent (spans 4 cols) */}
+      {/* Row 1: Regime Gauge + Shock Heatmap + Chat Agent */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -146,25 +142,12 @@ const DashboardGrid: React.FC<DashboardGridProps> = ({
         <ChatAgent />
       </motion.div>
 
-      {/* Row 2: Mispriced Markets (spans 6 cols) + Recommendations (spans 6 cols) */}
+      {/* Row 2: Recommendations (Now Full Width) */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.4 }}
-        className="lg:col-span-6"
-      >
-        <MispricedList 
-          data={marketData} 
-          isLoading={marketLoading} 
-          error={marketError} 
-        />
-      </motion.div>
-
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.5 }}
-        className="lg:col-span-6"
+        className="lg:col-span-12"
       >
         <Recommendations 
           data={recommendationData} 
@@ -173,7 +156,7 @@ const DashboardGrid: React.FC<DashboardGridProps> = ({
         />
       </motion.div>
 
-      {/* Row 3: Small Widgets (each spans 4 cols) */}
+      {/* Row 3: Small Widgets */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}

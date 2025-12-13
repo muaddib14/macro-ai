@@ -9,7 +9,6 @@ import { api } from '@/services/api';
 import { 
   RegimeData, 
   ShockDomain, 
-  MispricedMarket, 
   RecommendedTrade,
   LiquidityMeter,
   VolatilityIndex,
@@ -20,7 +19,7 @@ export default function StartTrading() {
   // State for all dashboard data
   const [regimeData, setRegimeData] = useState<RegimeData | null>(null);
   const [shockData, setShockData] = useState<ShockDomain[]>([]);
-  const [mispricedMarkets, setMispricedMarkets] = useState<MispricedMarket[]>([]);
+  // mispricedMarkets removed
   const [recommendations, setRecommendations] = useState<RecommendedTrade[]>([]);
   const [liquidity, setLiquidity] = useState<LiquidityMeter | null>(null);
   const [volatility, setVolatility] = useState<VolatilityIndex | null>(null);
@@ -30,15 +29,24 @@ export default function StartTrading() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  // Function to fetch dynamic data (Recommendations)
+  const fetchLiveRecommendations = async () => {
+    try {
+      const tradeRes = await api.trade.getRecommendations();
+      setRecommendations(tradeRes.data);
+    } catch (err) {
+      console.error("Failed to update recommendations:", err);
+    }
+  };
+
   useEffect(() => {
-    const fetchDashboardData = async () => {
+    const fetchInitialData = async () => {
       try {
         setIsLoading(true);
         // Fetch all data in parallel
         const [
           regimeRes,
           shockRes,
-          marketRes,
           tradeRes,
           liqRes,
           volRes,
@@ -46,7 +54,6 @@ export default function StartTrading() {
         ] = await Promise.all([
           api.regime.getRegimeData(),
           api.shock.getShockData(),
-          api.market.getMispricedMarkets(),
           api.trade.getRecommendations(),
           api.widget.getLiquidityData(),
           api.widget.getVolatilityData(),
@@ -55,7 +62,6 @@ export default function StartTrading() {
 
         setRegimeData(regimeRes.data);
         setShockData(Array.isArray(shockRes.data) ? shockRes.data : []);
-        setMispricedMarkets(marketRes.data);
         setRecommendations(tradeRes.data);
         setLiquidity(liqRes.data);
         setVolatility(volRes.data);
@@ -68,10 +74,15 @@ export default function StartTrading() {
       }
     };
 
-    fetchDashboardData();
+    fetchInitialData();
     
+    // Set up polling for "Alive" feel on recommendations
+    const intervalId = setInterval(fetchLiveRecommendations, 3000); // Update every 3 seconds
+
     // Ensure page starts at top
     window.scrollTo(0, 0);
+
+    return () => clearInterval(intervalId);
   }, []);
 
   return (
@@ -101,17 +112,17 @@ export default function StartTrading() {
               shockLoading={isLoading}
               shockError={error}
               
-              // MARKETS (Fixed prop name)
-              marketData={mispricedMarkets}
-              marketLoading={isLoading}
-              marketError={error}
+              // MARKETS (Removed/Empty)
+              marketData={[]}
+              marketLoading={false}
+              marketError={null}
               
-              // RECOMMENDATIONS (Fixed prop name)
+              // RECOMMENDATIONS
               recommendationData={recommendations}
               recommendationLoading={isLoading}
               recommendationError={error}
               
-              // WIDGETS (Fixed prop mapping)
+              // WIDGETS
               liquidityData={liquidity}
               liquidityLoading={isLoading}
               liquidityError={error}

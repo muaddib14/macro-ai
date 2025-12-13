@@ -87,7 +87,7 @@ export default function AboutPage() {
             About MacroCycle AI
           </h1>
           <p className="text-xl text-[#A1A1AA] max-w-3xl mx-auto leading-relaxed">
-            We're building the world's most advanced AI-powered macro trading system, 
+            We&apos;re building the world&apos;s most advanced AI-powered macro trading system, 
             combining quantitative rigor with cutting-edge machine learning to navigate 
             global financial markets.
           </p>
@@ -313,8 +313,8 @@ export default function AboutPage() {
             Join the Future of Macro Trading
           </h2>
           <p className="text-[#A1A1AA] mb-8 max-w-2xl mx-auto">
-            Whether you're an individual trader, institutional investor, or developer 
-            looking to integrate our API, we'd love to hear from you.
+            Whether you&apos;re an individual trader, institutional investor, or developer 
+            looking to integrate our API, we&apos;d love to hear from you.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-4">
             <Button size="lg" className="px-8">

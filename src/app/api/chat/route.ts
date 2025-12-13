@@ -1,46 +1,60 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { chatResponses, defaultResponse } from '@/data/mockChatResponses';
+import { mockRecommendations } from '@/data/mockRecommendations';
 
-export async function POST(request: NextRequest) {
+// Helper to add random variance to numbers
+const perturb = (value: number, variance: number) => {
+  const change = (Math.random() - 0.5) * variance;
+  return Number((value + change).toFixed(4));
+};
+
+// Helper to randomly fluctuate integers (like signal strength)
+const fluctuate = (value: number, min: number, max: number) => {
+  const change = Math.random() > 0.7 ? (Math.random() > 0.5 ? 1 : -1) : 0;
+  return Math.min(Math.max(value + change, min), max);
+};
+
+export async function GET(request: NextRequest) {
   try {
-    const { message } = await request.json();
+    // Simulate API delay (faster for live updates feel)
+    await new Promise(resolve => setTimeout(resolve, 200));
+
+    // Generate dynamic "live" data based on mock data
+    const dynamicData = mockRecommendations.map(rec => {
+      // Create variations
+      const newKelly = perturb(rec.kelly_fraction, 0.01);
+      const newEV = perturb(rec.expected_value, 0.02);
+      const newSignalStrength = fluctuate(rec.signal_strength, 1, 10);
+      
+      // Update confidence band string based on signal strength
+      let newConfidenceBand = rec.confidence_band;
+      if (Math.random() > 0.7) {
+        const baseConf = 60 + (newSignalStrength * 3);
+        newConfidenceBand = `${baseConf}-${baseConf + 12}%`;
+      }
+
+      return {
+        ...rec,
+        kelly_fraction: Math.max(0.01, newKelly), // Ensure positive
+        expected_value: newEV,
+        signal_strength: newSignalStrength,
+        confidence_band: newConfidenceBand
+      };
+    });
     
-    if (!message || typeof message !== 'string') {
-      return NextResponse.json(
-        { 
-          error: 'Invalid message',
-          timestamp: new Date().toISOString() 
-        },
-        { status: 400 }
-      );
-    }
-
-    // Simulate AI processing delay
-    await new Promise(resolve => setTimeout(resolve, 1500));
-
-    // Find matching response based on keywords
-    const normalizedMessage = message.toLowerCase();
-    let response = defaultResponse;
-
-    // Check for keyword matches
-    if (normalizedMessage.includes('fed cuts') || normalizedMessage.includes('fed rate')) {
-      response = chatResponses['fed cuts by 2026-03-31'];
-    } else if (normalizedMessage.includes('mispriced') || normalizedMessage.includes('opportunity')) {
-      response = chatResponses['find mispriced markets'];
-    } else if (normalizedMessage.includes('regime') || normalizedMessage.includes('current')) {
-      response = chatResponses['current regime'];
-    } else if (normalizedMessage.includes('energy') || normalizedMessage.includes('oil')) {
-      response = chatResponses['energy shock'];
+    // Occasionally shuffle order to simulate new opportunities rising
+    if (Math.random() > 0.8) {
+      dynamicData.sort(() => Math.random() - 0.5);
     }
 
     return NextResponse.json({
-      ...response,
+      data: dynamicData,
+      status: 'success',
       timestamp: new Date().toISOString(),
     });
   } catch (error) {
     return NextResponse.json(
       { 
-        error: 'Failed to process chat message',
+        error: 'Failed to fetch recommendations',
         timestamp: new Date().toISOString() 
       },
       { status: 500 }

@@ -31,7 +31,11 @@ const MispricedList: React.FC<MispricedListProps> = ({ data, isLoading, error })
     );
   }
 
-  if (error || !data) {
+  // Safety check: Ensure data is an array before trying to render
+  const marketList = Array.isArray(data) ? data : [];
+  const hasData = marketList.length > 0;
+
+  if (error || !hasData) {
     return (
       <Card>
         <CardHeader>
@@ -39,7 +43,7 @@ const MispricedList: React.FC<MispricedListProps> = ({ data, isLoading, error })
         </CardHeader>
         <CardContent>
           <div className="flex items-center justify-center h-64 text-[#F43F5E]">
-            {error || 'No data available'}
+            {error || 'No opportunities found'}
           </div>
         </CardContent>
       </Card>
@@ -57,7 +61,7 @@ const MispricedList: React.FC<MispricedListProps> = ({ data, isLoading, error })
         </CardHeader>
         <CardContent>
           <div className="space-y-3">
-            {data.map((market, index) => (
+            {marketList.slice(0, 5).map((market, index) => (
               <motion.div
                 key={market.id}
                 initial={{ opacity: 0, x: -20 }}
@@ -66,12 +70,12 @@ const MispricedList: React.FC<MispricedListProps> = ({ data, isLoading, error })
                 className="p-4 bg-[#18181B] rounded-lg border border-[#27272A] hover:border-[#FFA500] transition-all duration-300"
               >
                 <div className="flex items-start justify-between mb-2">
-                  <div className="flex-1">
-                    <h4 className="text-sm font-medium text-[#FFFFFF] mb-1 leading-tight">
+                  <div className="flex-1 pr-4">
+                    <h4 className="text-sm font-medium text-[#FFFFFF] mb-1 leading-tight line-clamp-2">
                       {market.name}
                     </h4>
                     <div className="flex items-center space-x-4 text-xs text-[#A1A1AA]">
-                      <span>{market.category}</span>
+                      <span className="capitalize">{market.category}</span>
                       <span>•</span>
                       <span>{market.horizon}</span>
                     </div>
@@ -80,7 +84,7 @@ const MispricedList: React.FC<MispricedListProps> = ({ data, isLoading, error })
                     variant="ghost"
                     size="sm"
                     onClick={() => setSelectedMarket(market)}
-                    className="ml-2"
+                    className="ml-2 flex-shrink-0"
                   >
                     Detail
                   </Button>
@@ -126,7 +130,7 @@ const MispricedList: React.FC<MispricedListProps> = ({ data, isLoading, error })
                     </div>
                   </div>
                   <div className="text-xs text-[#52525B]">
-                    Vol: ${(market.volume_24h / 1000000).toFixed(1)}M
+                    Vol: ${(market.volume_24h / 1000).toFixed(1)}k
                   </div>
                 </div>
               </motion.div>
@@ -215,12 +219,12 @@ const MispricedList: React.FC<MispricedListProps> = ({ data, isLoading, error })
                   <div className="space-y-2">
                     <div className="flex justify-between">
                       <span className="text-sm text-[#A1A1AA]">Category:</span>
-                      <span className="text-sm text-[#FFFFFF]">{selectedMarket.category}</span>
+                      <span className="text-sm text-[#FFFFFF] capitalize">{selectedMarket.category}</span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-sm text-[#A1A1AA]">24h Volume:</span>
                       <span className="text-sm text-[#FFFFFF]">
-                        ${(selectedMarket.volume_24h / 1000000).toFixed(1)}M
+                        ${(selectedMarket.volume_24h).toLocaleString()}
                       </span>
                     </div>
                   </div>

@@ -6,40 +6,31 @@ export interface ApiResponse<T> {
   message?: string;
 }
 
-// Regime Types
-export interface Regime {
-  name: string;
-  probability: number;
+// Database Entities (Based on your schema)
+export interface DbMarket {
+  id: string;
+  question: string;
+  status: string;
+  last_yes_price: number;
+  last_no_price: number;
+  volume_24h: number;
+  category: string;
+  implied_prob: number;
 }
 
-export interface RegimeData {
-  current: {
-    primary: string;
-    probability: number;
-    horizon: string;
-    timestamp: string;
-  };
-  timeseries: Array<{
-    date: string;
-    regimes: Record<string, number>;
-  }>;
-}
-
-// Shock/Heatmap Types
-export interface ShockDomain {
-  domain: string;
+export interface DbTradingSignal {
+  id: string;
+  market_id: string;
+  model_prob: number;
+  edge: number;
+  direction: 'YES' | 'NO';
+  confidence: 'low' | 'medium' | 'high';
+  kelly_fraction: number;
   score: number;
-  intensity: 'low' | 'medium' | 'high' | 'critical';
-  top_headlines: Array<{
-    headline: string;
-    tone: 'positive' | 'negative' | 'neutral';
-    source: string;
-    timestamp: string;
-  }>;
-  description: string;
+  markets?: DbMarket; // Joined data
 }
 
-// Market Types
+// UI Types (Mapped from DB)
 export interface MispricedMarket {
   id: string;
   name: string;
@@ -54,7 +45,6 @@ export interface MispricedMarket {
   confidence: 'low' | 'medium' | 'high';
 }
 
-// Trade Types
 export interface RecommendedTrade {
   id: string;
   market_name: string;
@@ -98,12 +88,37 @@ export interface NewsItem {
   impact_score: number;
 }
 
-// Chat Types
-export interface ChatMessage {
-  id: string;
-  content: string;
-  sender: 'user' | 'ai';
-  timestamp: string;
+// Regime Data Type
+export interface RegimeData {
+  current: {
+    primary: string;
+    probability: number;
+    horizon: string;
+    timestamp: string;
+  };
+  timeseries: Array<{
+    date: string;
+    regimes: Record<string, number>;
+  }>;
+}
+
+// Shock/Heatmap Types
+export interface ShockDomain {
+  domain: string;
+  score: number;
+  intensity: 'low' | 'medium' | 'high' | 'critical';
+  top_headlines: Array<{
+    headline: string;
+    tone: 'positive' | 'negative' | 'neutral';
+    source: string;
+    timestamp: string;
+  }>;
+  description: string;
+}
+
+export interface LoadingState {
+  isLoading: boolean;
+  error?: string;
 }
 
 export interface ChatResponse {
@@ -115,41 +130,4 @@ export interface ChatResponse {
   uncertainty_factors: string[];
 }
 
-// Component Props Types
-export interface DashboardCardProps {
-  title: string;
-  children: React.ReactNode;
-  className?: string;
-  action?: React.ReactNode;
-}
-
-export interface LoadingState {
-  isLoading: boolean;
-  error?: string;
-}
-
-// Chart Data Types
-export interface ChartDataPoint {
-  x: string | number;
-  y: number;
-  label?: string;
-}
-
-// Modal Types
-export interface ModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  title: string;
-  children: React.ReactNode;
-}
-
-// Navigation Types
-export interface NavigationItem {
-  label: string;
-  href: string;
-  icon?: React.ComponentType;
-  active?: boolean;
-}
-
-// Re-export RealMarketData from data module
 export type { RealMarketData } from '@/data/realMarketData';

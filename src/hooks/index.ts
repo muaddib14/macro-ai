@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { api } from '@/services/api';
-import { ApiResponse, LoadingState, RegimeData } from '@/types';
+import { ApiResponse, LoadingState, RegimeData, TradingMetrics } from '@/types';
 
 // Generic hook for data fetching with loading and error states
 function useApi<T>(
@@ -94,13 +94,14 @@ export const useSystemStatus = () => {
   return useApi(fetcher, []);
 };
 
-// Chat hook with message handling
+// Chat hook with enhanced message handling and trading metrics
 export const useChat = () => {
   const [messages, setMessages] = useState<Array<{
     id: string;
     content: string;
     sender: 'user' | 'ai';
     timestamp: string;
+    metrics?: TradingMetrics;
   }>>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -124,6 +125,7 @@ export const useChat = () => {
         content: response.data.answer,
         sender: 'ai' as const,
         timestamp: new Date().toISOString(),
+        metrics: response.data.metrics,
       };
 
       setMessages(prev => [...prev, aiMessage]);

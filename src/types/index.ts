@@ -6,6 +6,15 @@ export interface ApiResponse<T> {
   message?: string;
 }
 
+// Trading Metrics for AI Chat Responses
+export interface TradingMetrics {
+  confidence: number;
+  kelly_fraction?: number;
+  uncertainty_factor: number;
+  market_regime?: string;
+  risk_level: 'low' | 'medium' | 'high';
+}
+
 // Database Entities (Based on your schema)
 export interface DbMarket {
   id: string;

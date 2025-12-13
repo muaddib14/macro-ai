@@ -81,6 +81,53 @@ const ChatAgent: React.FC = () => {
                       : 'bg-[#000000] border border-[#FFA500] text-[#FFFFFF] rounded-tl-sm'
                   )}>
                     <p className="leading-relaxed">{message.content}</p>
+                    
+                    {/* Trading Metrics for AI messages */}
+                    {message.sender === 'ai' && message.metrics && (
+                      <div className="mt-3 pt-2 border-t border-[#FFA500]/20">
+                        <div className="grid grid-cols-2 gap-2 text-xs">
+                          <div>
+                            <span className="text-[#A1A1AA]">Confidence: </span>
+                            <span className="text-[#FFA500] font-medium">
+                              {(message.metrics.confidence * 100).toFixed(0)}%
+                            </span>
+                          </div>
+                          <div>
+                            <span className="text-[#A1A1AA]">Risk: </span>
+                            <span className={cn(
+                              'font-medium',
+                              message.metrics.risk_level === 'low' ? 'text-[#10B981]' :
+                              message.metrics.risk_level === 'medium' ? 'text-[#F59E0B]' : 'text-[#EF4444]'
+                            )}>
+                              {message.metrics.risk_level.toUpperCase()}
+                            </span>
+                          </div>
+                          {message.metrics.kelly_fraction && (
+                            <div>
+                              <span className="text-[#A1A1AA]">Kelly: </span>
+                              <span className="text-[#FFA500] font-medium">
+                                {(message.metrics.kelly_fraction * 100).toFixed(1)}%
+                              </span>
+                            </div>
+                          )}
+                          <div>
+                            <span className="text-[#A1A1AA]">Uncertainty: </span>
+                            <span className="text-[#A1A1AA] font-medium">
+                              {(message.metrics.uncertainty_factor * 100).toFixed(0)}%
+                            </span>
+                          </div>
+                        </div>
+                        {message.metrics.market_regime && (
+                          <div className="mt-1 text-xs">
+                            <span className="text-[#A1A1AA]">Regime: </span>
+                            <span className="text-[#FFA500] font-medium capitalize">
+                              {message.metrics.market_regime.replace('_', ' ')}
+                            </span>
+                          </div>
+                        )}
+                      </div>
+                    )}
+                    
                     <p className={cn(
                       'text-xs mt-2',
                       message.sender === 'user' ? 'text-[#A1A1AA]' : 'text-[#FFA500]'

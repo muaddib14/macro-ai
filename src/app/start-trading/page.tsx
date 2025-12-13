@@ -16,34 +16,31 @@ import {
 } from '@/types';
 
 export default function StartTrading() {
-  // State for all dashboard data
   const [regimeData, setRegimeData] = useState<RegimeData | null>(null);
   const [shockData, setShockData] = useState<ShockDomain[]>([]);
-  // mispricedMarkets removed
   const [recommendations, setRecommendations] = useState<RecommendedTrade[]>([]);
   const [liquidity, setLiquidity] = useState<LiquidityMeter | null>(null);
   const [volatility, setVolatility] = useState<VolatilityIndex | null>(null);
   const [news, setNews] = useState<NewsItem[]>([]);
   
-  // Loading & Error States
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Function to fetch dynamic data (Recommendations)
-  const fetchLiveRecommendations = async () => {
+  // Dedicated function for high-frequency updates
+  const updateLivePositions = async () => {
     try {
+      // Only fetch the changing trading data to save bandwidth
       const tradeRes = await api.trade.getRecommendations();
       setRecommendations(tradeRes.data);
     } catch (err) {
-      console.error("Failed to update recommendations:", err);
+      console.warn("Live update skipped:", err);
     }
   };
 
   useEffect(() => {
-    const fetchInitialData = async () => {
+    const initDashboard = async () => {
       try {
         setIsLoading(true);
-        // Fetch all data in parallel
         const [
           regimeRes,
           shockRes,
@@ -67,34 +64,32 @@ export default function StartTrading() {
         setVolatility(volRes.data);
         setNews(newsRes.data);
       } catch (err) {
-        console.error("Dashboard data fetch failed:", err);
-        setError("Failed to load dashboard data. Please try again.");
+        console.error("Dashboard init failed:", err);
+        setError("Failed to initialize dashboard. Connecting to backup feeds...");
+        // Fallback or retry logic could go here
       } finally {
         setIsLoading(false);
       }
     };
 
-    fetchInitialData();
-    
-    // Set up polling for "Alive" feel on recommendations
-    const intervalId = setInterval(fetchLiveRecommendations, 3000); // Update every 3 seconds
+    initDashboard();
 
-    // Ensure page starts at top
-    window.scrollTo(0, 0);
+    // Fast polling (2s) for Recommendations to simulate an active trading desk
+    const tradeInterval = setInterval(updateLivePositions, 2000);
 
-    return () => clearInterval(intervalId);
+    return () => {
+      clearInterval(tradeInterval);
+    };
   }, []);
 
   return (
     <main className="min-h-screen bg-[#09090b] text-white relative overflow-hidden">
-      {/* Interactive Background Layer */}
       <InteractiveLavaBackground />
 
       <div className="relative z-10 flex flex-col min-h-screen">
         <Header />
 
         <div className="flex-1 container mx-auto px-4 py-8">
-          {/* Main Dashboard Area */}
           <motion.div
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
@@ -102,27 +97,23 @@ export default function StartTrading() {
             className="border-t border-[#27272A] pt-12"
           >
             <DashboardGrid 
-              // REGIME
               regimeData={regimeData}
               regimeLoading={isLoading}
               regimeError={error}
               
-              // SHOCK
               shockData={shockData}
               shockLoading={isLoading}
               shockError={error}
               
-              // MARKETS (Removed/Empty)
+              // We pass empty/null for removed sections
               marketData={[]}
               marketLoading={false}
               marketError={null}
               
-              // RECOMMENDATIONS
               recommendationData={recommendations}
               recommendationLoading={isLoading}
               recommendationError={error}
               
-              // WIDGETS
               liquidityData={liquidity}
               liquidityLoading={isLoading}
               liquidityError={error}

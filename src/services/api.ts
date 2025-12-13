@@ -26,7 +26,7 @@ const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'eyJhbGci
 abstract class BaseApiService {
   protected async fetchWithErrorHandling<T>(url: string, options: RequestInit = {}): Promise<T> {
     try {
-      // Add Supabase headers for Functions and REST API
+      // Add Supabase headers for Functions and REST API if needed
       const isSupabaseRequest = url.includes('supabase.co');
       
       const headers = {
@@ -94,7 +94,6 @@ export class RegimeService extends BaseApiService {
       const response = await this.fetchSupabaseFunction<{ data: RegimeData }>('regime-analysis');
       return this.createApiResponse(response.data);
     } catch (error) {
-      // Fallback if function fails, normally you might return mock here
       throw error;
     }
   }
@@ -130,18 +129,15 @@ export class ShockService extends BaseApiService {
   }
 }
 
-// Market Service - CONNECTED TO REAL SUPABASE TABLES
+// Market Service
 export class MarketService extends BaseApiService {
   async getMispricedMarkets(): Promise<ApiResponse<MispricedMarket[]>> {
     try {
-      // Query trading_signals joined with markets
-      // Selecting top edges, ensuring we have market data
       const query = 'select=*,markets(*)&order=edge.desc&limit=10';
       const signals = await this.fetchSupabaseTable<DbTradingSignal>('trading_signals', query);
       
-      // Map DB types to UI types
       const mappedMarkets: MispricedMarket[] = signals
-        .filter(s => s.markets) // Ensure market data exists
+        .filter(s => s.markets)
         .map(s => ({
           id: s.id,
           name: s.markets?.question || 'Unknown Market',
@@ -149,7 +145,7 @@ export class MarketService extends BaseApiService {
           model_price: s.model_prob,
           edge: s.edge,
           kelly_stake: s.kelly_fraction,
-          horizon: 'Varies', // You might want to calculate this or fetch from DB
+          horizon: 'Varies',
           rationale: `Model probability ${Math.round(s.model_prob * 100)}% vs Market ${Math.round((s.markets?.last_yes_price || 0) * 100)}%`,
           volume_24h: s.markets?.volume_24h || 0,
           category: s.markets?.category || 'General',
@@ -164,34 +160,16 @@ export class MarketService extends BaseApiService {
   }
 
   async getMarketDetails(marketId: string): Promise<ApiResponse<MispricedMarket | null>> {
-    // Placeholder for detail fetch if needed
     return this.createApiResponse(null);
   }
 }
 
-// Trade Service - CONNECTED TO REAL SUPABASE TABLES
+// Trade Service
 export class TradeService extends BaseApiService {
   async getRecommendations(): Promise<ApiResponse<RecommendedTrade[]>> {
+    // UPDATED: Fetch from local API to use the dynamic engine instead of static Supabase data
     try {
-      // Query recommendations table
-      const query = 'select=*&order=expected_value.desc&limit=5';
-      const recommendations = await this.fetchSupabaseTable<any>('recommendations', query);
-      
-      const mappedRecs: RecommendedTrade[] = recommendations.map(r => ({
-        id: r.id,
-        market_name: r.market_ticker || 'Unknown Market',
-        position: 'YES', // Defaulting, check your DB if 'direction' exists in recommendations
-        kelly_fraction: r.kelly_optimal_size || 0,
-        confidence_band: `${Math.round((r.confidence || 0) * 100)}%`,
-        time_horizon: 'Medium Term',
-        risk_level: 'medium',
-        expected_value: r.expected_value || 0,
-        max_loss: 1.0, // Standard binary option risk
-        reasoning: r.reasoning || 'AI Generated Recommendation',
-        signal_strength: Math.round((r.confidence || 0.5) * 10)
-      }));
-
-      return this.createApiResponse(mappedRecs);
+      return this.fetchWithErrorHandling<ApiResponse<RecommendedTrade[]>>('/api/recommendations');
     } catch (error) {
       console.error('Failed to fetch recommendations', error);
       return this.createApiResponse([]);
@@ -214,7 +192,6 @@ export class WidgetService extends BaseApiService {
   }
 
   async getNewsTicker(): Promise<ApiResponse<NewsItem[]>> {
-    // Ideally fetch from 'market_stats' or 'insights' table
     return this.createApiResponse(mockNewsTicker);
   }
 }
